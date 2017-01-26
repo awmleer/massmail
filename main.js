@@ -63,6 +63,7 @@ app.on('activate', function () {
 const {ipcMain} = require('electron');
 var Imap = require('imap'),
   inspect = require('util').inspect;
+var fs = require('fs')
 
 var imap = new Imap({
   user: 'zmk6d9mtb@sina.com',
@@ -71,10 +72,6 @@ var imap = new Imap({
   port: 993,
   tls: true
 });
-
-function openInbox(cb) {
-  imap.openBox('INBOX', true, cb);
-}
 
 // imap.once('ready', function() {
 //   openInbox(function(err, box) {
@@ -133,13 +130,60 @@ ipcMain.on('get_boxes_start', (event, arg) => {
 });
 
 ipcMain.on('get_boxes',(event,arg)=>{
-  let res;
   imap.getBoxes(function (err,boxes) {
     console.log(boxes);
-    res=boxes;
-    event.returnValue=res;
+    event.returnValue=boxes;
   });
 });
+
+ipcMain.on('open_box',(event,arg)=>{
+  imap.openBox(arg,function (err,box) {
+    console.log(box);
+    event.returnValue=box;
+  });
+});
+
+ipcMain.on('search',(event,arg)=>{
+  imap.search([ 'ALL' ], function(err, results) {
+    if (err) throw err;
+    var f = imap.fetch(results, { bodies: ['HEADER'] });
+    f.on('message', function(msg, seqno) {
+      console.log('Message #%d', seqno);
+      var prefix = '(#' + seqno + ') ';
+      msg.on('body', function(stream, info) {
+        console.log(prefix + 'Body');
+        // console.log(stream.read());
+        let body='';
+        // stream.on('readable',function(buffer){
+        //   body += buffer.read().toString();
+        // });
+        stream.on('data', function(chunk) {
+          body += chunk.toString('utf8');
+        });
+        stream.on('end',function(){
+          console.log('#'+seqno+' final output \n');
+          console.log(Imap.parseHeader(body));
+        });
+        // stream.pipe(fs.createWriteStream('msg-' + seqno + '-body.txt'));
+      });
+      msg.once('attributes', function(attrs) {
+        console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8));
+      });
+      msg.once('end', function() {
+        console.log(prefix + 'Finished');
+      });
+    });
+    f.once('error', function(err) {
+      console.log('Fetch error: ' + err);
+      event.returnValue=0;
+    });
+    f.once('end', function() {
+      console.log('Done fetching all messages!');
+      event.returnValue=0;
+    });
+  });
+});
+
 
 ipcMain.on('open_box_start',(event,arg)=>{
   imap.openBox('INBOX', true, (err,box)=>{

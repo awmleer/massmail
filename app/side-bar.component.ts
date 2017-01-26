@@ -26,18 +26,23 @@ export class SideBarComponent  {
     this.ngZone=zone;
   }
   ngZone:NgZone;
-  test(){
+  test2(){
     // ipcRenderer.once('get_boxes_done',this.get_boxes_done.bind(this));
     // todo fix: view updating in callback function
     // ipcRenderer.send('get_boxes_start');
     let res=ipcRenderer.sendSync('get_boxes');
     _.forIn(res,(value:any,key:any)=>{
-      
+      let box=ipcRenderer.sendSync('open_box',key);
+      console.log(box);
       this.boxes.push({
         name:key,
-        attr:value
+        count:box.messages.total
       });
     });
+  }
+  test(){
+    ipcRenderer.sendSync('open_box','INBOX');
+    ipcRenderer.sendSync('search');
   }
 
     // console.log(this.boxes);
