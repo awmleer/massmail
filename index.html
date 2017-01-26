@@ -1,28 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Angular QuickStart</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="styles.css">
+<head>
+  <title>MassMail</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
 
-    <!-- Polyfill(s) for older browsers -->
-    <script src="node_modules/core-js/client/shim.min.js"></script>
+  <!-- Polyfill(s) for older browsers -->
+  <script src="node_modules/core-js/client/shim.min.js"></script>
 
-    <script src="node_modules/zone.js/dist/zone.js"></script>
-    <script src="node_modules/systemjs/dist/system.src.js"></script>
+  <script src="node_modules/zone.js/dist/zone.js"></script>
+  <script src="node_modules/systemjs/dist/system.src.js"></script>
 
-    <script src="systemjs.config.js"></script>
-    <script>
-      System.import('app').catch(function(err){ console.error(err); });
-      require('./renderer.js')
-    </script>
-  </head>
+  <!-- Normal script imports starts -->
+  <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+  <script src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script>if (window.module) module = window.module;</script>
+  <!-- Normal script imports ends -->
 
-  <body>
-    <my-app>Loading AppComponent content here ...</my-app>
-    We are using Node.js <script>document.write(process.versions.node)</script>,
-    Chromium <script>document.write(process.versions.chrome)</script>,
-    and Electron <script>document.write(process.versions.electron)</script>.
-  </body>
+  <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+
+  <script src="semantic/dist/semantic.min.js"></script>
+  <link rel="stylesheet" href="semantic/dist/semantic.min.css">
+
+  <script src="systemjs.config.js"></script>
+  <script>
+    System.import('app').catch(function(err){ console.error(err); });
+    require('./renderer.js')
+  </script>
+</head>
+
+<body>
+<my-app></my-app>
+</body>
 </html>

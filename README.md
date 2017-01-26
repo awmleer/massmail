@@ -4,6 +4,30 @@ A mail app for all desktop platforms (Mac, Windows and Linux), based on electron
 
 Below are the origin README of the electron-quick-start project:
 
+## Before develop
+
+What you need first:
+
+```
+git
+node
+npm
+```
+
+And then, clone this repository, and run:
+
+```bash
+# Install dependencies
+npm install
+# Install semantic
+cd semantic
+gulp build
+# Run the app
+npm start
+```
+
+
+
 
 
 # electron-quick-start
