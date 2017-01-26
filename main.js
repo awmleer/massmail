@@ -140,3 +140,10 @@ ipcMain.on('get_boxes',(event,arg)=>{
     event.returnValue=res;
   });
 });
+
+ipcMain.on('open_box_start',(event,arg)=>{
+  imap.openBox('INBOX', true, (err,box)=>{
+    //todo: if err
+    event.sender.send('open_box_done', box);
+  });
+});

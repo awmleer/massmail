@@ -3,8 +3,8 @@
     Inbox
     <div class="ui teal left pointing label">1</div>
   </a>
-  <a class="item" *ngFor="let box of boxes | objNgFor">
-    {{box.key}}
+  <a class="item" *ngFor="let box of boxes">
+    {{box.name}}
     <div class="ui label">51</div>
   </a>
   <a class="item" (click)="test()">

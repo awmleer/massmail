@@ -26,6 +26,7 @@
     "@angular/platform-browser": "~2.4.0",
     "@angular/platform-browser-dynamic": "~2.4.0",
     "@angular/router": "~3.4.0",
+    "@types/lodash": "^4.14.50",
     "angular-in-memory-web-api": "~0.2.4",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
