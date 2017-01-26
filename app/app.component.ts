@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 // import { ipc } from '../ipc';
 const {ipcRenderer} = require('electron');
-console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
+// console.log(ipcRenderer.sendSync('synchronous-message', 'ping')); // prints "pong"
 
 
 
@@ -16,10 +16,13 @@ export class AppComponent  {
   name = 'Angular';
   test(){
     // console.log(ipc);
-    ipcRenderer.once('asynchronous-reply', (event:any, arg:any) => {
-      console.log(arg); // prints "pong"
-    });
-    ipcRenderer.send('asynchronous-message', 'ping');
+    // ipcRenderer.once('asynchronous-reply', (event:any, arg:any) => {
+    //   console.log(arg); // prints "pong"
+      // console.log(event);
+    // });
+    // ipcRenderer.send('asynchronous-message', 'ping');
+    // console.log(ipcRenderer.sendSync('synchronous-message', 'ping'));
+    console.log(ipcRenderer.sendSync('get_boxes'));
   };
 
 }

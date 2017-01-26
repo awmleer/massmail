@@ -61,12 +61,120 @@ app.on('activate', function () {
 
 // In main process.
 const {ipcMain} = require('electron');
-ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log(arg)  // prints "ping"
-  event.sender.send('asynchronous-reply', 'pong')
+var Imap = require('imap'),
+  inspect = require('util').inspect;
+
+var imap = new Imap({
+  user: 'zmk6d9mtb@sina.com',
+  password: '#3kLjPe9cr',
+  host: 'imap.sina.com',
+  port: 993,
+  tls: true
 });
 
+function openInbox(cb) {
+  imap.openBox('INBOX', true, cb);
+}
+
+imap.once('ready', function() {
+  openInbox(function(err, box) {
+    if (err) throw err;
+    var f = imap.seq.fetch('1:3', {
+      bodies: 'HEADER.FIELDS (FROM TO SUBJECT DATE)',
+      struct: true
+    });
+    f.on('message', function(msg, seqno) {
+      console.log('Message #%d', seqno);
+      var prefix = '(#' + seqno + ') ';
+      msg.on('body', function(stream, info) {
+        var buffer = '';
+        stream.on('data', function(chunk) {
+          buffer += chunk.toString('utf8');
+        });
+        stream.once('end', function() {
+          console.log(prefix + 'Parsed header: %s', inspect(Imap.parseHeader(buffer)));
+        });
+      });
+      msg.once('attributes', function(attrs) {
+        console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8));
+      });
+      msg.once('end', function() {
+        console.log(prefix + 'Finished');
+      });
+    });
+    f.once('error', function(err) {
+      console.log('Fetch error: ' + err);
+    });
+    f.once('end', function() {
+      console.log('Done fetching all messages!');
+      // imap.end();
+    });
+  });
+});
+
+imap.once('error', function(err) {
+  console.log(err);
+});
+
+imap.once('end', function() {
+  console.log('Connection ended');
+});
+
+imap.connect();
+//
+// ipcMain.on('asynchronous-message', (event, arg) => {
+//   console.log(arg);  // prints "ping"
+
+//   event.sender.send('asynchronous-reply', 'test');
+// });
+
 ipcMain.on('synchronous-message', (event, arg) => {
-  console.log(arg)  // prints "ping"
-  event.returnValue = 'pong'
+  console.log(arg);  // prints "ping"
+  let res='ttt';
+  imap.getBoxes(function (err,boxes) {
+    console.log(boxes);
+  });
+  // openInbox(function(err, box) {
+  //   if (err) throw err;
+  //   var f = imap.seq.fetch('1:3', {
+  //     bodies: 'HEADER.FIELDS (FROM TO SUBJECT DATE)',
+  //     struct: true
+  //   });
+  //   f.on('message', function(msg, seqno) {
+  //     res+='Message #'+seqno+'\n';//data
+  //     var prefix = '(#' + seqno + ') ';
+  //     msg.on('body', function(stream, info) {
+  //       var buffer = '';
+  //       stream.on('data', function(chunk) {
+  //         buffer += chunk.toString('utf8');
+  //       });
+  //       stream.once('end', function() {
+  //         res+=prefix + 'Parsed header: ' + inspect(Imap.parseHeader(buffer));
+  //       });
+  //     });
+  //     msg.once('attributes', function(attrs) {
+  //       console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8));
+  //     });
+  //     msg.once('end', function() {
+  //       console.log(prefix + 'Finished');
+  //     });
+  //   });
+  //   f.once('error', function(err) {
+  //     console.log('Fetch error: ' + err);
+  //   });
+  //   f.once('end', function() {
+  //     console.log('Done fetching all messages!');
+  //     // imap.end();
+  //   });
+  // });
+  event.returnValue = res;
+});
+
+ipcMain.on('get_boxes',(event,arg)=>{
+  let res;
+  imap.getBoxes(function (err,boxes) {
+    console.log(boxes);
+    res=boxes;
+    event.returnValue=res;
+  });
 });
