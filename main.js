@@ -1,15 +1,15 @@
-const electron = require('electron')
+const electron = require('electron');
 // Module to control application life.
-const app = electron.app
+const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 
-const path = require('path')
-const url = require('url')
+const path = require('path');
+const url = require('url');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow;
 
 function createWindow () {
   // Create the browser window.
@@ -66,9 +66,9 @@ var Imap = require('imap'),
 var fs = require('fs')
 
 var imap = new Imap({
-  user: 'zmk6d9mtb@sina.com',
-  password: '#3kLjPe9cr',
-  host: 'imap.sina.com',
+  user: 'massmail@sparker.xyz',
+  password: 'Yn4wgT9Nb&',
+  host: 'imap.mxhichina.com',
   port: 993,
   tls: true
 });
@@ -119,6 +119,32 @@ imap.once('end', function() {
 
 imap.connect();
 
+
+
+
+
+
+//express server
+var express = require('express');
+var express_app = express();
+
+express_app.get('/', function (req, res) {
+  res.send('Hello World!');
+});
+
+var server=express_app.listen(16788, function () {
+  var host = server.address().address;
+  var port = server.address().port;
+
+  console.log('Example app listening at http://%s:%s', host, port);
+});
+
+
+
+
+
+
+//ipc
 ipcMain.on('get_boxes_start', (event, arg) => {
   console.log(arg);  // prints "ping"
   imap.getBoxes(function (err,boxes) {
@@ -153,6 +179,7 @@ ipcMain.on('fetch_all_start',(event,arg)=>{//arg: <string> mailbox_name
       let mails=[];
       if(uids.length==0){
         event.sender.send('fetch_all_done', {status:'success',payload:[]});
+        return;
       }
       let f = imap.fetch(uids, { bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)'] });
       f.on('message', function(msg, seqno) {
