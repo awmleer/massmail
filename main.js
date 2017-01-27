@@ -143,10 +143,62 @@ ipcMain.on('open_box',(event,arg)=>{
   });
 });
 
-ipcMain.on('search',(event,arg)=>{
-  imap.search([ 'ALL' ], function(err, results) {
+
+ipcMain.on('fetch_all_start',(event,arg)=>{//arg: <string> mailbox_name
+  imap.openBox(arg, true, (err,box)=>{
+    //todo: if err
     if (err) throw err;
-    var f = imap.fetch(results, { bodies: ['HEADER'] });
+
+    imap.search([ 'ALL' ], function(err, uids) {
+      if (err) throw err;
+      let mails=[];
+      let f = imap.fetch(uids, { bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)'] });
+      f.on('message', function(msg, seqno) {
+        console.log('Message #%d', seqno);
+        let prefix = '(#' + seqno + ') ';
+        let mail={};
+        msg.once('body', function(stream, info) {
+          console.log(prefix + 'Body');
+          let header_raw='';
+          stream.on('data', function(chunk) {
+            header_raw += chunk.toString('utf8');
+          });
+          stream.on('end',function(){
+            console.log('#'+seqno+' final output \n');
+            mail.header=Imap.parseHeader(header_raw);
+            console.log(mail.header);
+          });
+        });
+        msg.once('attributes', function(attrs) {
+          console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8));
+          mail.uid=attrs.uid;
+          mail.flags=attrs.flags;
+          mail.date=attrs.date;
+        });
+        msg.once('end', function() {
+          console.log(prefix + 'Finished');
+          mails.push(mail);
+        });
+      });
+      f.once('error', function(err) {
+        console.log('Fetch error: ' + err);
+        event.sender.send('fetch_all_done', {status:'err',payload:err});
+      });
+      f.once('end', function() {
+        console.log('Done fetching all messages!');
+        event.sender.send('fetch_all_done', {
+          status:'success',
+          payload:mails
+        });
+      });
+    });
+  });
+});
+
+ipcMain.on('search',(event,arg)=>{
+  imap.search([ 'ALL' ], function(err, uids) {
+    if (err) throw err;
+    var f = imap.fetch(uids, { bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)'] });
     f.on('message', function(msg, seqno) {
       console.log('Message #%d', seqno);
       var prefix = '(#' + seqno + ') ';

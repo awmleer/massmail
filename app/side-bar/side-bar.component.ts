@@ -2,13 +2,14 @@ import { Component,NgZone } from '@angular/core';
 
 // import { ObjNgFor } from './obj-ng-for.pipe';
 import * as _ from "lodash";
+import {bindOutputs} from "@angular/compiler/src/view_compiler/event_binder";
 
 const {ipcRenderer} = require('electron');
 
 
 @Component({
   selector: 'side-bar',
-  templateUrl:'app/side-bar.component.html'
+  templateUrl:'app/side-bar/side-bar.component.html'
 })
 export class SideBarComponent  {
   //todo: class box
@@ -41,9 +42,15 @@ export class SideBarComponent  {
     });
   }
   test(){
-    ipcRenderer.sendSync('open_box','INBOX');
-    ipcRenderer.sendSync('search');
+    ipcRenderer.once('fetch_all_done',function (event:any,arg:any) {
+      console.log(arg);
+    });
+    ipcRenderer.send('fetch_all_start','INBOX');
+    // ipcRenderer.sendSync('open_box','INBOX');
+    // ipcRenderer.sendSync('search');
   }
+
+  test_text='hahaha';
 
     // console.log(this.boxes);
 
