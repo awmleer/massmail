@@ -1,2 +1,8 @@
-<!--<div *ngFor="let mail of mails"></div>-->
-some mails here{{p}}
+<div *ngFor="let mail of mails">
+  uid: {{mail.uid}}<br>
+  subject: {{mail.header.subject}}
+  <br>
+</div>
+
+<button (click)="fetch()">fetch</button>
+some mails here {{box_name}}

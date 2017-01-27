@@ -5,7 +5,7 @@ import { MailCardListComponent } from './mail-card-list/mail-card-list.component
 
 
 const routes: Routes = [
-  { path: '', redirectTo: '/box/1', pathMatch: 'full' },
+  { path: '', redirectTo: '/box/INBOX', pathMatch: 'full' },
   // { path: 'dashboard',  component: MailCardListComponent },
   { path: 'box/:box_name', component: MailCardListComponent }
   // { path: 'heroes',     component: MailCardListComponent }

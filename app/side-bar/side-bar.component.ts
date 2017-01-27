@@ -2,7 +2,6 @@ import { Component,NgZone } from '@angular/core';
 
 // import { ObjNgFor } from './obj-ng-for.pipe';
 import * as _ from "lodash";
-import {bindOutputs} from "@angular/compiler/src/view_compiler/event_binder";
 
 const {ipcRenderer} = require('electron');
 
@@ -49,9 +48,6 @@ export class SideBarComponent  {
     // ipcRenderer.sendSync('open_box','INBOX');
     // ipcRenderer.sendSync('search');
   }
-
-  test_text='hahaha';
-
     // console.log(this.boxes);
 
     // this.test_this(function(){

@@ -9,24 +9,6 @@ import { MailCardListComponent } from './mail-card-list/mail-card-list.component
 import { ObjNgFor } from "./pipes/obj-ng-for.pipe";
 
 
-// const appRoutes: Routes = [
-//   { path: 'box/:box_name', component: MailCardListComponent },
-//   // { path: 'crisis-center', component: CrisisListComponent },
-//   {
-//     path: 'heroes',
-//     component: HeroListComponent,
-//     data: {
-//       title: 'Heroes List'
-//     }
-//   },
-//   // { path: '', component: HomeComponent },
-//   // { path: '**', component: PageNotFoundComponent }
-// ];
-
-
-
-
-
 @NgModule({
   imports:      [
     BrowserModule,
