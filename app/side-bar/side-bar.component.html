@@ -3,24 +3,16 @@
     Inbox
     <div class="ui teal left pointing label">1</div>
   </a>
-  <a class="item" (click)="test()">
-    Updates
+  <a class="item" (click)="get_boxes()">
+    Update
     <div class="ui label">1</div>
   </a>
-  <a class="item" *ngFor="let box of boxes">
+  <a class="item" *ngFor="let box of boxes" routerLink="/box/{{box.name}}" routerLinkActive="active teal">
     {{box.name}}
     <div class="ui label">{{box.count}}</div>
   </a>
   <a class="item" routerLink="/box/2" routerLinkActive="active teal">
     test1
-    <div class="ui label">1</div>
-  </a>
-  <a class="item" routerLink="/box/3" routerLinkActive="active teal">
-    test2
-    <div class="ui label">1</div>
-  </a>
-  <a class="item" routerLink="/box/4" routerLinkActive="active teal">
-    test3
     <div class="ui label">1</div>
   </a>
   <div class="item">

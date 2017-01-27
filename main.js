@@ -123,9 +123,8 @@ ipcMain.on('get_boxes_start', (event, arg) => {
   console.log(arg);  // prints "ping"
   imap.getBoxes(function (err,boxes) {
     console.log(boxes);
-    res=boxes;
     // event.returnValue=res;
-    event.sender.send('get_boxes_done', res);
+    event.sender.send('get_boxes_done', boxes);
   });
 });
 
@@ -152,6 +151,9 @@ ipcMain.on('fetch_all_start',(event,arg)=>{//arg: <string> mailbox_name
     imap.search([ 'ALL' ], function(err, uids) {
       if (err) throw err;
       let mails=[];
+      if(uids.length==0){
+        event.sender.send('fetch_all_done', {status:'success',payload:[]});
+      }
       let f = imap.fetch(uids, { bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)'] });
       f.on('message', function(msg, seqno) {
         console.log('Message #%d', seqno);
@@ -238,8 +240,8 @@ ipcMain.on('search',(event,arg)=>{
 
 
 ipcMain.on('open_box_start',(event,arg)=>{
-  imap.openBox('INBOX', true, (err,box)=>{
-    //todo: if err
+  imap.openBox(arg,function (err,box) {
+    // console.log(box);
     event.sender.send('open_box_done', box);
   });
 });
