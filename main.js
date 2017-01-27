@@ -132,45 +132,8 @@ express_app.get('/', function (req, res) {
   res.send('Hello World!');
 });
 
-var server=express_app.listen(16788, function () {
-  var host = server.address().address;
-  var port = server.address().port;
-
-  console.log('Example app listening at http://%s:%s', host, port);
-});
-
-
-
-
-
-
-//ipc
-ipcMain.on('get_boxes_start', (event, arg) => {
-  console.log(arg);  // prints "ping"
-  imap.getBoxes(function (err,boxes) {
-    console.log(boxes);
-    // event.returnValue=res;
-    event.sender.send('get_boxes_done', boxes);
-  });
-});
-
-ipcMain.on('get_boxes',(event,arg)=>{
-  imap.getBoxes(function (err,boxes) {
-    console.log(boxes);
-    event.returnValue=boxes;
-  });
-});
-
-ipcMain.on('open_box',(event,arg)=>{
-  imap.openBox(arg,function (err,box) {
-    console.log(box);
-    event.returnValue=box;
-  });
-});
-
-
-ipcMain.on('fetch_all_start',(event,arg)=>{//arg: <string> mailbox_name
-  imap.openBox(arg, true, (err,box)=>{
+express_app.get('/fetch_all',function (req,res) {
+  imap.openBox(req.query.box_name, true, (err,box)=>{
     //todo: if err
     if (err) throw err;
 
@@ -211,16 +174,54 @@ ipcMain.on('fetch_all_start',(event,arg)=>{//arg: <string> mailbox_name
       });
       f.once('error', function(err) {
         console.log('Fetch error: ' + err);
-        event.sender.send('fetch_all_done', {status:'err',payload:err});
+        res.json({status:'err',payload:err});
       });
       f.once('end', function() {
         console.log('Done fetching all messages!');
-        event.sender.send('fetch_all_done', {
+        res.json({
           status:'success',
           payload:mails
         });
       });
     });
+  });
+
+});
+
+
+var server=express_app.listen(16788, function () {
+  var host = server.address().address;
+  var port = server.address().port;
+
+  console.log('Example app listening at http://%s:%s', host, port);
+});
+
+
+
+
+
+
+//ipc
+ipcMain.on('get_boxes_start', (event, arg) => {
+  console.log(arg);  // prints "ping"
+  imap.getBoxes(function (err,boxes) {
+    console.log(boxes);
+    // event.returnValue=res;
+    event.sender.send('get_boxes_done', boxes);
+  });
+});
+
+ipcMain.on('get_boxes',(event,arg)=>{
+  imap.getBoxes(function (err,boxes) {
+    console.log(boxes);
+    event.returnValue=boxes;
+  });
+});
+
+ipcMain.on('open_box',(event,arg)=>{
+  imap.openBox(arg,function (err,box) {
+    console.log(box);
+    event.returnValue=box;
   });
 });
 
