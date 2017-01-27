@@ -24,13 +24,13 @@ export class MailCardListComponent  {
   ) {}
 
   fetch():void{
-    ipcRenderer.once('fetch_all_done',function (event:any,arg:any) {
-      console.log(this.mails);
-      this.mails=arg.payload;
-      console.log(this.mails);
-      this.zone.run(() => {});
-    }.bind(this));
-    ipcRenderer.send('fetch_all_start',this.box_name);
+    // ipcRenderer.once('fetch_all_done',function (event:any,arg:any) {
+    //   console.log(this.mails);
+    //   this.mails=arg.payload;
+    //   console.log(this.mails);
+    //   this.zone.run(() => {});
+    // }.bind(this));
+    // ipcRenderer.send('fetch_all_start',this.box_name);
   }
 
   ngOnInit(): void {

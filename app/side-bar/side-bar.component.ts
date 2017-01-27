@@ -2,8 +2,9 @@ import { Component,NgZone } from '@angular/core';
 
 // import { ObjNgFor } from './obj-ng-for.pipe';
 import * as _ from "lodash";
+import {MailService} from "../services/mail.service";
 
-const {ipcRenderer} = require('electron');
+// const {ipcRenderer} = require('electron');
 
 
 @Component({
@@ -24,6 +25,7 @@ export class SideBarComponent  {
   }
 
   constructor(
+    private mailService: MailService,
     private zone:NgZone
   ){}
 
@@ -40,22 +42,31 @@ export class SideBarComponent  {
   //     });
   //   });
   // }
-  get_boxes(){
-    ipcRenderer.once('get_boxes_done',function(event:any, arg:any){
-      _.forIn(arg,(value:any,key:any)=>{
-        ipcRenderer.once('open_box_done',function (event:any, box:any) {
-          this.boxes.push({
-            name:key,
-            attr:value,
-            count:box.messages.total
-          });
-          this.zone.run(()=>{});
-        }.bind(this));
-        ipcRenderer.send('open_box_start',key);
+  getBoxes(){
+    this.mailService.getBoxes().then(function(boxes:any){
+      console.log(boxes);
+      _.forIn(boxes,(value:any,key:any)=>{
+        this.boxes.push({
+          name:key,
+          attr:value
+        });
       });
-      console.log(this.boxes);
     }.bind(this));
-    ipcRenderer.send('get_boxes_start');
+    //   ipcRenderer.once('get_boxes_done',function(event:any, arg:any){
+    //     _.forIn(arg,(value:any,key:any)=>{
+    //       ipcRenderer.once('open_box_done',function (event:any, box:any) {
+    //         this.boxes.push({
+    //           name:key,
+    //           attr:value,
+    //           count:box.messages.total
+    //         });
+    //         this.zone.run(()=>{});
+    //       }.bind(this));
+    //       ipcRenderer.send('open_box_start',key);
+    //     });
+    //     console.log(this.boxes);
+    //   }.bind(this));
+    //   ipcRenderer.send('get_boxes_start');
   }
   // console.log(this.boxes);
 
@@ -69,7 +80,7 @@ export class SideBarComponent  {
     // this.p=this.route.params[0].value.id;
     // console.log(this.route.params.value);
     // console.log(this.location);
-    this.get_boxes();
+    this.getBoxes();
   }
 
 

@@ -188,6 +188,15 @@ express_app.get('/fetch_all',function (req,res) {
 
 });
 
+express_app.get('/get_boxes',function (req,res){
+  imap.getBoxes(function (err,boxes) {
+    console.log(boxes);
+    // event.returnValue=res;
+    res.json(boxes);
+  });
+});
+
+
 
 var server=express_app.listen(16788, function () {
   var host = server.address().address;
